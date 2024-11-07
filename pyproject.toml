@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "Audio API"
+version = "0.0.1"
+description = "OpenAI compatible API for audio processing"
+authors = ["Oscar Bahamonde <oscar.bahamonde@indiecloud.co>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+spacy = "^3.5.1"
+pydub = "^0.25.1"
+torch = "^2.0.1"
+torchaudio = "^2.0.1"
+openai = "^0.27.2"
+pytube = "^15.0.0"
+fastapi = {extras = ["all"], version = "^0.95.0"}
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+python-multipart = "^0.0.6"
+python-dotenv = "^1.0.0"
+yt-dlp = "^2023.2.17"
+rdict = "^0.2.0"
+
+# Direct Git dependency for TTS
+TTS = {git = "https://github.com/obahamonde/TTS-la.git"}
+
+[build-system]
+requires = ["poetry-core>=1.5.0"]
+build-backend = "poetry.core.masonry.api"

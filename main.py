@@ -1,10 +1,14 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from speech.handler import app as speech_app
 from translations.main import app as translations_app
 from transcribe.main import app as transcribe_app
 
+
+
 def create_app():
+    os.environ["COQUI_TOS_AGREED"] = "true"
     app = FastAPI(
         title="Audio API",
         description="API for audio processing",
