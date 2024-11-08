@@ -26,7 +26,7 @@ steps:
 
 # Define environment substitutions
 substitutions:
-  _REGION: 'us-central1'
+  _REGION: 'southamerica-west1'
 
 # Specify images to cache
 images:

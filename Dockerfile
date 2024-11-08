@@ -28,14 +28,8 @@ RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 # Clone additional repository and install package
 RUN git clone https://github.com/obahamonde/TTS-la.git && cd TTS-la && pip install -e . && cd ..
 
-# Download language models for spaCy
-RUN spacy download en_core_web_sm
-RUN spacy download es_core_news_sm
-
-
-
 # Expose port
 EXPOSE 8080
 
 # Command to run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["sh", "boot.sh"]
