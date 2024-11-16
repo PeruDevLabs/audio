@@ -11,54 +11,55 @@ import numpy as np
 from typing import Union
 from uuid import UUID
 
-def compute_fingerprint(audio_data: Union[bytes, np.ndarray], user: str, secret_text: str = "default_secret") -> str:
+
+def compute_fingerprint(
+    audio_data: Union[bytes, np.ndarray], user: str, secret_text: str = "default_secret"
+) -> str:
     """
     Compute a fingerprint for voice data using audio content, user ID, and a secret text.
-    
+
     Args:
         audio_data: Either raw bytes or numpy array of audio data
         user: UUID of the user
         secret_text: Secret text to use in fingerprint generation
-    
+
     Returns:
         str: Hex digest of the fingerprint
     """
     # Convert bytes to numpy array if needed
     if isinstance(audio_data, bytes):
         audio_data = np.frombuffer(audio_data, dtype=np.int16)
-    
+
     # Ensure audio_data is a numpy array
     if not isinstance(audio_data, np.ndarray):
         raise ValueError("Audio data must be either bytes or numpy array")
 
     # Create a SHA-256 hasher
     hasher = hashlib.sha256()
-    
+
     # Add the secret text first
-    hasher.update(secret_text.encode('utf-8'))
-    
+    hasher.update(secret_text.encode("utf-8"))
+
     # Add the user UUID
-    hasher.update(str(user).encode('utf-8'))
-    
+    hasher.update(str(user).encode("utf-8"))
+
     # Process audio data in chunks to handle large files efficiently
     chunk_size = 8192  # Process 8KB at a time
-    
+
     # Convert audio data to bytes if it's not already
     audio_bytes = audio_data.tobytes()
-    
+
     for i in range(0, len(audio_bytes), chunk_size):
-        chunk = audio_bytes[i:i + chunk_size]
+        chunk = audio_bytes[i : i + chunk_size]
         hasher.update(chunk)
-    
+
     # Get the final hash
     fingerprint = hasher.hexdigest()
-    
+
     return fingerprint
 
 
 SpeakerName: TypeAlias = Literal[
-    "EN",
-    "ES",
     "Claribel Dervla",
     "Daisy Studious",
     "Gracie Wise",
@@ -120,8 +121,6 @@ SpeakerName: TypeAlias = Literal[
 ]
 
 speakers: list[SpeakerName] = [
-    "EN",
-    "ES",
     "Claribel Dervla",
     "Daisy Studious",
     "Gracie Wise",
@@ -191,16 +190,25 @@ def get_speaker() -> SpeakerName:
     except IndexError:
         raise ValueError("No speakers available")
 
+
 class VoiceObject(BaseModel):
-    id:str = Field(default_factory=lambda:str(uuid4()))
+    id: str = Field(default_factory=lambda: str(uuid4()))
     fingerprint: str
     user: str
     audio: bytes
 
     @classmethod
-    async def from_upload(cls, *, upload:UploadFile=File(...),user:UUID=Query(default_factory=uuid4))->Self:
+    async def from_upload(
+        cls,
+        *,
+        upload: UploadFile = File(...),
+        user: UUID = Query(default_factory=uuid4)
+    ) -> Self:
         data = await upload.read()
-        return cls(fingerprint=compute_fingerprint(data,str(user)),user=str(user),audio=data)
+        return cls(
+            fingerprint=compute_fingerprint(data, str(user)), user=str(user), audio=data
+        )
+
 
 class CreateSpeechRequest(BaseModel):
     model: Literal["xtts"] = Field(

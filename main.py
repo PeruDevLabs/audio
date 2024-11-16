@@ -1,9 +1,13 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+load_dotenv()
 from speech.handler import app as speech_app
 from translations.main import app as translations_app
 from transcribe.main import app as transcribe_app
+from pydantic import BaseModel
+
 
 
 
@@ -27,3 +31,11 @@ def create_app():
 
 
 app = create_app()
+
+class HealthCheck(BaseModel):
+    status: str = "ok"
+    code: int = 200
+
+@app.get("/", response_model=HealthCheck)
+def health_check():
+    return HealthCheck()

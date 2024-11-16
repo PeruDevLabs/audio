@@ -1,53 +1,44 @@
-from typing import Optional
-
-from fastapi import APIRouter, HTTPException, status
+import typing as tp
+from fastapi import APIRouter, HTTPException, status, Form, Query, File, UploadFile
 from httpx import AsyncClient
 from openai import AsyncOpenAI
 from openai._utils._proxy import LazyProxy
-from openai.types.audio.transcription import Transcription
 from pydantic import BaseModel, Field
 from typing_extensions import Literal
+from dotenv import load_dotenv
+
+load_dotenv()
+from .utils import get_logger
+
+logger = get_logger()
 
 def get_client():
     return AsyncOpenAI()
 
-class TranscriptionCreate(BaseModel, LazyProxy[AsyncOpenAI]):
-    file: str = Field(..., description="The URL of the audio file to transcribe.")
-    model: Literal["whisper-large-v3"] = Field(
-        default="whisper-large-v3", description="The model to use for transcription."
-    )
-    language: Optional[Literal["en", "es"]] = Field(
-        default="en",
-        description="The language of the input audio. Supplying the input language in ISO-639-1 format will improve accuracy and latency.",
-    )
-    prompt: str = Field(
-        ...,
-        description="An optional text to guide the model's style or continue a previous audio segment. The prompt should match the audio language.",
-    )
-    response_format: Literal["json", "text", "srt", "verbose_json", "vtt"]
-    temperature: float
-
-    def __load__(self):
-        return get_client()
 
 app = APIRouter(tags=["audio"], prefix="/audio")
+ai = AsyncOpenAI()
 
 @app.post("/transcriptions")
-async def handler(request: TranscriptionCreate) -> Transcription:
+async def transcriptions_handler(
+    language:tp.Optional[str]=Query(default="es"),
+    file:UploadFile = File(...),
+    model:tp.Literal["whisper-large-v3"] = Form(default="whisper-large-v3"),
+    prompt:tp.Optional[str] = Form(default=None),
+    response_format:tp.Literal["json","text","srt","verbose_json","vtt"]=Form(default="json"),
+    temperature:float=Form(default=1.0)
+):
     try:
-        async with AsyncClient() as client:
-            response = await client.get(request.file)
-            data = response.content
-
-        return await request.__load__().audio.transcriptions.create(
-            file=("audio.mp3", data),
-            model=request.model,
-            language=request.language or "en",
-            prompt=request.prompt,
-            response_format=request.response_format,
-            temperature=request.temperature,
+        return await get_client().audio.transcriptions.create(
+            file=(file.filename, await file.read(),file.content_type),
+            model=model,
+            language=language,
+            prompt=prompt,
+            response_format=response_format,
+            temperature=temperature,
         )
     except (Exception, HTTPException) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e),

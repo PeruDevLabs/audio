@@ -8,6 +8,7 @@ from pydub import AudioSegment  # type: ignore
 from TTS.api import TTS  # type: ignore
 from .schema import CreateSpeechRequest, SpeakerLanguage, AudioFormat
 
+
 class XTTS(TTS):
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
@@ -22,7 +23,11 @@ class XTTS(TTS):
         cls: Type[Self], *, path: str = "tts_models/multilingual/multi-dataset/xtts_v2"
     ) -> Self:
         return cls(path).to(
-            torch.device("cuda" if torch.cuda.is_available() else torch.device("mps") if torch.backends.mps.is_available() else "cpu")
+            torch.device(
+                "cuda"
+                if torch.cuda.is_available()
+                else torch.device("mps") if torch.backends.mps.is_available() else "cpu"
+            )
         )
 
     def split_text(self, *, text: str, language: str):
@@ -79,4 +84,3 @@ class XTTS(TTS):
                 "Accept-Ranges": "bytes",
             },
         )
-

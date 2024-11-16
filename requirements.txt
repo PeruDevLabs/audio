@@ -4,7 +4,6 @@ torch
 torchaudio
 openai
 pytube
-TTS @ git+https://github.com/obahamonde/TTS-la.git
 fastapi[all]
 uvicorn[standard]
 python-multipart
