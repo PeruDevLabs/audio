@@ -3,14 +3,14 @@ pydub
 torch
 torchaudio
 openai
-pytube
+# pytube
 fastapi[all]
 uvicorn[standard]
 python-multipart
 python-dotenv
-yt-dlp
-rdict
-assemblyai
+# yt-dlp
+# rdict
+# assemblyai
 boto3
 TTS @ git+https://github.com/obahamonde/TTS-la.git
 cachetools
