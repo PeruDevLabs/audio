@@ -12,3 +12,4 @@ yt-dlp
 rdict
 assemblyai
 boto3
+TTS @ git+https://github.com/obahamonde/TTS-la.git

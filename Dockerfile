@@ -15,18 +15,13 @@ RUN apt-get update && apt-get install -y \
 # Copy application code
 COPY . .
 
-# Copy .env file and load environment variables
-ARG ENV_FILE=.env
-RUN export $(cat $ENV_FILE | xargs)
-
 # Install PyTorch CPU version
 RUN pip install --no-cache-dir torch torchaudio --index-url https://download.pytorch.org/whl/cpu
 
 # Copy and install requirements
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-# Clone additional repository and install package
-RUN git clone https://github.com/obahamonde/TTS-la.git && cd TTS-la && pip install -e . && cd ..
+RUN spacy download en_core_web_sm && spacy link es_core_news_sm
 
 # Expose port
 EXPOSE 8080
