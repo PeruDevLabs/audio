@@ -26,6 +26,7 @@ TTS = {git = "https://github.com/obahamonde/TTS-la.git"}
 boto3 = "^1.35.63"
 assemblyai = "^0.35.1"
 
+
 [tool.poetry.group.dev.dependencies]
 boto3-stubs = {extras = ["all"], version = "^1.35.63"}
 

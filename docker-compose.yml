@@ -1,0 +1,19 @@
+services:
+  audio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - 8080:8080
+    networks:
+      - audio
+  
+networks:
+  audio:
+    driver: bridge
+
+volumes:
+  audio:
+    driver: local
