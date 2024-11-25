@@ -1,15 +1,12 @@
-from pydantic import BaseModel, Field
-from typing_extensions import TypeAlias, Self
-import random
-from typing import Literal, Optional
-from fastapi import UploadFile, File, Query
-from uuid import UUID, uuid4
-import numpy as np
-
 import hashlib
+import random
+from typing import Literal, Optional, Union
+from uuid import UUID, uuid4
+
 import numpy as np
-from typing import Union
-from uuid import UUID
+from fastapi import File, Query, UploadFile
+from pydantic import BaseModel, Field
+from typing_extensions import Self, TypeAlias
 
 
 def compute_fingerprint(
@@ -202,7 +199,7 @@ class VoiceObject(BaseModel):
         cls,
         *,
         upload: UploadFile = File(...),
-        user: UUID = Query(default_factory=uuid4)
+        user: UUID = Query(default_factory=uuid4),
     ) -> Self:
         data = await upload.read()
         return cls(

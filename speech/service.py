@@ -1,12 +1,14 @@
 import io
 from typing import Any, AsyncGenerator, Type
-from typing_extensions import Self
+
 import spacy
 import torch
 from fastapi.responses import StreamingResponse
 from pydub import AudioSegment  # type: ignore
 from TTS.api import TTS  # type: ignore
-from .schema import CreateSpeechRequest, SpeakerLanguage, AudioFormat
+from typing_extensions import Self
+
+from .schema import AudioFormat, CreateSpeechRequest, SpeakerLanguage
 
 
 class XTTS(TTS):
